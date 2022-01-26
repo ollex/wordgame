@@ -15,7 +15,7 @@ fs.createReadStream('german.dic')
 to convert into utf8. Importing into sqlite was then done by parsing each line from Golang and converting everything into lower case to circumvent search issues with German Umlaute in sqlite.
 
 ## How to use this repo
-Important - on first run provide your own passwords for users, there is nothing they can right now do except for playing, but in the future there maybe an admin area doing security related things. 
+Important - on first run provide your own passwords for users as first and second argument to the go run command, there is nothing they can right now do except for playing, but in the future there maybe an admin area doing security related things. 
 
 Start it from the command line by cd-ing into root folder and typing go run ./cmd or cd into cmd folder and issue go build -o ../app to produce binary that can be started from the correct folder to be able to parse the templates.
 
