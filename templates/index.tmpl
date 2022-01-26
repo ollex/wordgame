@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf8">
+        <title>Login</title>
+        <style>
+            body {font-family: Courier, "Lucida Console", monospace; font-size: 26px;}
+            body * {font-size: inherit}
+            button {
+                border: none;
+                background: darkblue;
+                color: white;
+                text-transform: uppercase;
+            }
+            .cell-body img{
+                width: 24px;
+                max-height: 24px;
+                display: inline-block;
+                background: #ffe5e5;
+                border-radius: 50px;
+                cursor: pointer;
+            }
+            .calendar-grid a {cursor:pointer; text-decoration: none; font-size: 1.2em;}
+            .week, .calendar-nav, .calendar-dt {
+            display: -webkit-box;
+            display: flex;
+            }
+            .over{background-color: ##fffff8!important;}
+            .day, .item, .calendar-dayname {
+            -webkit-box-flex: 1;
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
+            }
+            .calendar-dayname, .calendar-title {
+                text-align:center;
+            }
+            .month, .calendar-nav, .calendar-dt {
+            max-width: 1200px;
+            margin: 20px auto;
+            }
+            .week {
+            height: 100px;
+            }
+            .day {
+            color: #F98909;
+            padding: 5px;
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: -1px -1px #4b48d6,  inset -1px -1px 0 0 #4b48d6;
+            }
+            small {
+                font-size: 0.6em
+            }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">  
+    </head>
+    <body>
+        <div class="container grid-xl">
+            <div style="margin: 30px auto; width: 50%; min-width: 300px; display: block;text-align:center;">
+                <h3>Login</h3>
+                <p class="text-{{ .tpe }}">{{ .msg }}</p>
+                <form action="/login" method="POST">
+                    <p><label>Username</label><br>
+                    <input type="text" name="username" /></p>
+                    <p><label>Password</label><br>
+                    <input type="password" name="pw" /></p>
+                    <input type="hidden" name="_csrf" value="{{ .csrf }}">
+                    <button class="btn">Submit</button>
+                </form>
+                <p><small>Diese Seite benötigt einen Cookie für reibungslose Funktion. Sie akzeptieren dies, wenn Sie diese Seite benutzen. Es sind keine Angaben personenbezogener Daten nötig, um diese Seite zu benutzen, die Login Credentials sind keinen Personen zugeordnet.</small></p>
+                <p><small>Verantwortlich für den Inhalt ist. Olaf Sabatschus, Ingeborg-Bachmann Str 1/1, 72631 Aichtal, Deutschland</small></p>
+                <p></p>
+            </div>
+        </div>
+    </body>
+</html>

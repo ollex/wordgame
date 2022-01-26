@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf8">
+        <title>SCRABBLE</title>
+        <link rel="stylesheet" type="text/css" href="dragula.min.css">
+        <style>
+            body {padding: 0; margin: 0;font-family: Courier, "Lucida Console", monospace;font-size: 26px;}
+            a {text-decoration: none;color: inherit;font-size: inherit;}
+           .smr {width: 1.5em;}
+           .cell-body img{
+            width: 24px;
+            max-height: 24px;
+            display: inline-block;
+            background: #ffe5e5;
+            border-radius: 50px;
+            cursor: pointer;
+          }
+          button {
+              border: none;
+              background: darkblue;
+              color: white;
+              text-transform: uppercase;
+              font-size: inherit;
+              cursor: pointer;
+          }
+
+          .calendar-grid a {cursor:pointer; text-decoration: none; font-size: 1.2em;}
+          .week, .calendar-nav, .calendar-dt {
+            display: -webkit-box;
+            display: flex;
+          }
+          .over{background-color: ##fffff8!important;}
+          .day, .item, .calendar-dayname {
+            -webkit-box-flex: 1;
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
+          }
+          .calendar-dayname, .calendar-title {
+              text-align:center;
+              color: #5755d9;
+          }
+          .bgb {background: darkblue; font-weight: bold;font-size: calc(90vh / 48);line-height: calc(90vh / 15);}
+          .bgbb {background: darkblue; font-weight: bold;font-size: calc(90vh / 32)!important;line-height: calc(90vh / 15);cursor:pointer;}
+          .month, .calendar-nav, .calendar-dt {
+            max-width: 1200px;
+            margin: 20px auto;
+          }
+          .week {
+            height: calc(100vh / 16);
+            width: calc(100vh);
+            border-width: 1px 0 0 1px;
+          }
+          .item {
+            padding: 0;
+            box-shadow: -1px -1px #4b48d6,  inset -1px -1px 0 0 #4b48d6;
+            text-align: center;
+            font-size: calc(90vh / 48);
+            line-height: calc(90vh / 15);
+            color: #c7c7c7;
+            position: relative;
+          }
+          .bg {
+            background: #f5f5f5;
+          }
+          .selected {
+            -webkit-animation: fadein 2s ease-in alternate infinite;
+            -moz-animation: fadein 2s ease-in alternate infinite;
+            animation: fadein 2s ease-in alternate infinite;
+          }
+          @keyframes fadein {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+            -webkit-animation: blink-animation 1s steps(5, start) infinite;
+          }
+          @keyframes blink-animation {
+            to {
+              visibility: hidden;
+            }
+          }
+          @-webkit-keyframes blink-animation {
+            to {
+              visibility: hidden;
+            }
+          }
+          .played {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            bottom: 2px;
+            right: 2px;
+            background: orange;
+            color: black;
+            cursor: pointer;
+          }
+          .current {
+            background: green!important;
+          }
+          .day {
+            padding: 0;
+            text-align: center;
+            font-size: calc(90vh / 48);
+            line-height: calc(90vh / 15);
+            color: #c7c7c7;
+            position: relative;
+          }
+          .os-toast {
+              position: absolute;
+              padding: 14px 18px;
+              min-width: 250px;
+              z-index: 999999;
+              border-radius: 2px;
+              color: #fff;
+              font-weight: 300;
+              white-space: nowrap;
+              user-select: none;
+              background-color: red;
+              opacity: 0;
+              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+              box-sizing: border-box;
+              transform: scale(0.5);
+              transition: all 0.4s ease-out;
+          }
+          
+          #menu div {
+            -webkit-touch-callout: text;
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text; 
+            user-select: text; 
+          }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">  
+    </head>
+    <body>
+        <button class="btn btn-link" style="position: fixed; right: 0px;"><a href="/logout"><span>Logout<br>{{ .player }}</span></a></button>
+        <span id="points" style="position:fixed; right: 12px;top: 65px;"></span>
+        <span id="ami" class="blink" style="position: fixed; right: 12px; top: 95px;display:none;">Du bist dran!</span>
+        <input type="hidden" id="csrf" value="{{ .csrf }}" />
+        <input type="hidden" id="player" value="{{ .player }}" />
+          <div id="msgs" style="padding: 4px; position: fixed; overflow-wrap:break-word;overflow:auto;display:block; width: 300px; height: 260px;border: none;box-sizing:border-box;font-size:16px;"></div>
+          <textarea id="txt" style="position: fixed; top: 310px; width: 300px; height: 50px;font-size: calc(90vh / 48);"></textarea>
+          <button id="msg-btn" style="position: fixed; top: 365px;">CHAT</button> 
+        
+        <div style="position: fixed; width: 250px; height: 150px;display: block;padding: 2px;top: 390px">
+          <p><input id="wortinput" type="text" style="width: 294px;font-size: inherit;" placeholder="Wörter, komma-getrennt" /></p>
+          <p><button id="savebtn">Speichern</button></p>
+          <button id="delbtn">Löschen</button> 
+        </div>
+        <div id="pfield" style="width: calc(90vh); height: auto; display: block; margin: auto;"></div>
+        <div style="width: calc(90vh); height: 10%; display: block; margin: auto;"><div id="menu" class="week"></div></div>
+        <script src="dragula.min.js" type="text/javascript"></script>
+        <script src="gowd.js" type="text/javascript"></script>
+    </body>
+</html>

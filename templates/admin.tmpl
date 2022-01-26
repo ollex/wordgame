@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf8">
+        <title>Admin</title>
+        <style>
+          .os-toast {
+              position: absolute;
+              padding: 14px 18px;
+              min-width: 250px;
+              z-index: 999999;
+              border-radius: 2px;
+              color: #fff;
+              font-weight: 300;
+              white-space: nowrap;
+              user-select: none;
+              background-color: red;
+              opacity: 0;
+              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+              box-sizing: border-box;
+              transform: scale(0.5);
+              transition: all 0.4s ease-out;
+          }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">  
+    </head>
+    <body>
+        <button class="btn btn-link" style="position: fixed; right: 0px;"><a href="/logout"><span>Logout<br>{{ .player }}</span></a></button>
+        <input type="hidden" id="csrf" value="{{ .csrf }}" />
+        <div>Admin Area - to be implemented</div>
+        <script>
+          function sanitizeHTML(str) {
+              return str.replace(/[^\w. ]/gi, function (c) {
+                  return '&#' + c.charCodeAt(0) + ';';
+              });
+          };
+        function getApi(url) {
+            const requestOptions = {
+                method: 'GET'
+            };
+            return fetch(url, requestOptions).then(handleResponse);
+        }
+
+        function postApi(url, body) {
+            const csrf = document.getElementById("csrf").value;
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+                body: JSON.stringify(body)
+            };
+            return fetch(url, requestOptions).then(handleResponse);
+        }
+
+        function handleResponse(response) {
+            return response.text().then(text => {
+                const data = text && JSON.parse(text);
+                
+                if (!response.ok) {
+                    const error = (data && data.error) || response.statusText;
+                    return Promise.reject(error);
+                }
+                return data;
+            });
+        }
+        
+        function newToast(opts = {}) {
+            let options = {
+                ...{
+                    margin: 15,
+                    duration: 3000,
+                    html: 'Hello World',
+                    background: 'green',
+                    color: 'white',
+                },
+                ...opts
+            }
+            const newMsg = document.createElement('div');
+            newMsg.className = 'os-toast';
+            newMsg.innerHTML = options.html;
+            newMsg.style.position = 'fixed';
+            newMsg.style.top = '100px';
+            newMsg.style.right = '15px';
+            newMsg.style.transform = 'scale(1)';
+            newMsg.style.opacity = 1;
+            newMsg.style.backgroundColor = options.background;
+            newMsg.style.color = options.color;
+            document.body.insertBefore(newMsg, document.body.firstChild);
+
+            setTimeout(() => {
+                hide(newMsg);
+            }, options.duration);
+
+            let pushStack = options.margin;
+            Array.from(document.querySelectorAll('.os-toast'))
+            .filter(t => t.parentElement === newMsg.parentElement)
+            .forEach((t) => {
+                t.style.top = pushStack + 'px';
+                pushStack += t.offsetHeight + options.margin;
+            })
+        }
+
+        function hide(el) {
+            el.style.opacity = 0;
+            const tEnd = () => {
+                el.parentElement.removeChild(el);
+                el.removeEventListener('transitionend', tEnd);
+            };
+            el.addEventListener('transitionend', tEnd);
+        }
+        </script>
+    </body>
+</html>
