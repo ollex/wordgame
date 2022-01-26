@@ -415,12 +415,16 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 
 	r.Use(backupProtect())
+	var cs, st string
+	cs = randomString(32)
 
-	store := cookie.NewStore([]byte("someZsdf7_haasdfZZZasd$$"))
+	store := cookie.NewStore([]byte(cs))
 	r.Use(sessions.Sessions("session", store))
 
+	st = randomString(32)
+
 	r.Use(csrf.Middleware(csrf.Options{
-		Secret: "secret123",
+		Secret: st,
 		ErrorFunc: func(c *gin.Context) {
 			c.String(400, "CSRF token mismatch")
 			c.Abort()
