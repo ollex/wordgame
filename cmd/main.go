@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	cr "crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -416,12 +417,18 @@ func main() {
 
 	r.Use(backupProtect())
 	var cs, st string
-	cs = randomString(32)
+	b := make([]byte, 64)
+	_, err = cr.Read(b)
+	if err == nil {
+		cs = string(b[0:32])
+		st = string(b[32:])
+	} else {
+		cs = randomString(32)
+		st = randomString(32)
+	}
 
 	store := cookie.NewStore([]byte(cs))
 	r.Use(sessions.Sessions("session", store))
-
-	st = randomString(32)
 
 	r.Use(csrf.Middleware(csrf.Options{
 		Secret: st,
