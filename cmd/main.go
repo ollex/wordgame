@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"math/big"
 	"math/rand"
 	"net/http"
 	"os"
@@ -162,8 +163,14 @@ func (app *Application) getRandChar() rune {
 		}
 	}
 	if len(b) > 0 {
-		idx := rand.Intn(len(b))
-		r := b[idx]
+		idx, err := cr.Int(cr.Reader, big.NewInt(int64(len(b))))
+		var r rune
+		if err != nil {
+			idx2 := rand.Intn(len(b))
+			r = b[idx2]
+		} else {
+			r = b[int(idx.Int64())]
+		}
 		for i := 0; i < k; i++ {
 			if app.game.Letters[i].C == r {
 				app.game.Letters[i].Exist--
