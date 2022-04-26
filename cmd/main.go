@@ -159,7 +159,9 @@ func (app *Application) getRandChar() rune {
 	k := len(app.game.Letters)
 	for i := 0; i < k; i++ {
 		if app.game.Letters[i].Exist > 0 {
-			b = append(b, app.game.Letters[i].C)
+			for z := uint8(0); z < app.game.Letters[i].Exist; z++ {
+				b = append(b, app.game.Letters[i].C)
+			}
 		}
 	}
 	if len(b) > 0 {
@@ -383,6 +385,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
+		log.Println(s)
 	}
 	if len(os.Args) >= 3 {
 		s2, err = HashIt(os.Args[2])
